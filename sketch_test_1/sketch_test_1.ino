@@ -1,12 +1,12 @@
 
-#define driveONEDirPin 0
-#define driveONEStepPin 1
+#define driveONEDirPin 2
+#define driveONEStepPin 3
 
 #define driveONEstepsPerRota 1600 // steps per 1 rotation
 #define driveONEmmPerRota 35  // mm per 1 rotation // REQ CALIBRATION
 
 // -----INPUT----- 
-#define driveONEdistanceMM 20 // TO GO in mm
+#define driveONEdistanceMM 200 // TO GO in mm
 double driveONESpeed = 1.0; // Speed in cm/sec
 bool driveONEStartDir = true; // true = HIGH (right, out), false = LOW (left, in) // REQ CALIBRATION
 // ---------------
@@ -59,14 +59,29 @@ void setup() {
   // Setting pins as OUTPUT
   pinMode(driveONEDirPin, OUTPUT);
   pinMode(driveONEStepPin, OUTPUT);
-
+  pinMode(LED_BUILTIN, OUTPUT);
+  
   driveONEInfo = GetDriveInfo(1);
   SetDirection(driveONEInfo);
 }
 
+void blinkStart(){
+  unsigned int i;
+
+   for ( i = 0; i < 5; i++ ){
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(500);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(500);
+   }
+}
+
 void loop() {
-  
+  blinkStart();
+  delay(1000);
+  digitalWrite(LED_BUILTIN, HIGH);
   Go(1);
+  digitalWrite(LED_BUILTIN, LOW);
   ChangeDirection(driveONEInfo);
 }
 
