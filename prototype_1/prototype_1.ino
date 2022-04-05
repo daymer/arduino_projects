@@ -37,11 +37,14 @@ double driveONETimePausePercent = 1 - driveONETimePulsPercent; //pause before an
 
 // PulsCalcMode 2: calc puls\pause time by fixed length
 int driveONEFixedPulsTimeUS = 64; //us
+int driveONEWarmingFixedPulsTimeUS = 64; //us
+int driveONEWarmingFixedPauseTimeUS = 929; //us
 // ---------------
 
 int driveNum;
 
 struct driveInfo {
+  int num;
   int dirPin;
   int stepPin;
   bool currentDir;
@@ -62,8 +65,8 @@ struct driveInfo GetDriveInfo(int driveNum){
    // Defining driveDirPin and driveCurrentDir
   struct driveInfo _driveInfo;   
   if (driveNum == 1){
+    _driveInfo.num = 1;
     _driveInfo.dirPin = driveONEDirPin;
-    //_driveInfo.currentDir = 0;
     _driveInfo.startDir = driveONEStartDir;
     _driveInfo.stepPin = driveONEStepPin;
     
@@ -88,11 +91,11 @@ struct driveInfo GetDriveInfo(int driveNum){
   }
 }
 
+void(* resetFunc) (void) = 0; //declare reset function at address 0
+
 struct driveInfo Go(struct driveInfo _driveInfo) {
 
-  // CHECK IF _driveInfo.timePulsMS > 5ms
-
-  if (_driveInfo.timePulsMS < 0){
+  if (_driveInfo.timePulsMS <= 0){
     while (1){
       Serial << "Wrong rotation settings! timePuls < 0ms: " << _driveInfo.timePulsMS  << "\n";
       blinkStart(200);
@@ -155,12 +158,21 @@ void FixInterruptLeft() {
     LastInterruptLeftHitTime = millis();
     InterruptLeftHitCount++;
     }
+  if (InterruptLeftHitCount > 0) {
+    resetFunc();
+    }
   }
 
 void FixInterruptRight() {
+  if (millis() - LastInterruptRightHitTime >= 300) {
+    LastInterruptLeftHitTime = millis();
+    InterruptRightHitCount++;
+    }
+  if (InterruptRightHitCount > 0) {
+    resetFunc();
+    }
   }
 
-void(* resetFunc) (void) = 0; //declare reset function at address 0
 
 void setup() {
   Serial.begin(9600);
@@ -175,22 +187,64 @@ void setup() {
   struct driveInfo driveONEInfo;
   driveOne = SetDirection(driveOne);
 
-  // interruptions
+  Serial.println("Init is done, warming up");
+  pinMode(interruptPinLeft, INPUT);
+  pinMode(interruptPinRight, INPUT);
+  // is there a diff with 
+  // pinMode(interruptPinLeft, INPUT_PULLUP);
+  // pinMode(interruptPinRight, INPUT_PULLUP);
+
+    
+  driveOne = WarmingUp(driveOne);
+
+ 
+    // interruptions
+  Serial.println("Warming up is done, setting interruptions up");
   pinMode(interruptPinLeft, INPUT_PULLUP);
   pinMode(interruptPinRight, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(interruptPinLeft), FixInterruptLeft, RISING);
   attachInterrupt(digitalPinToInterrupt(interruptPinRight), FixInterruptRight, RISING);
-
-  Serial.println("Init is done, warming up");
-  
 
   
   Serial.println("Setup is done, starting the main programm");
 }
 
 
-void WarmingUp(struct driveInfo _driveInfo) {
-  // Move _driveInfo to the left untill interruptPinLeft will Rise
+struct driveInfo WarmingUp(struct driveInfo _driveInfo) {
+  // Move drive to oposite  the untill interruptPinLeft will rise
+  // bool _direction = !_driveInfo.startDir;
+  int steps_done_1 = 0;
+  int steps_done_2 = 0;
+  int interruptPin_1;
+  struct driveInfo _drive;
+
+  if (_driveInfo.startDir){
+    interruptPin_1 = interruptPinRight;
+  }
+  else {
+    interruptPin_1 = interruptPinLeft;
+  };
+  _drive = ChangeDirection(_driveInfo);  
+  
+  while (!digitalRead(interruptPin_1)){ 
+    digitalWrite(_driveInfo.stepPin, HIGH);
+    delayMicroseconds(driveONEWarmingFixedPulsTimeUS);
+    digitalWrite(_driveInfo.stepPin, LOW);
+    delayMicroseconds((driveONEWarmingFixedPauseTimeUS));
+    steps_done_1++;
+  };
+  
+  _drive = ChangeDirection(_drive);
+  while (digitalRead(interruptPin_1)){ 
+    digitalWrite(_driveInfo.stepPin, HIGH);
+    delayMicroseconds(driveONEWarmingFixedPulsTimeUS);
+    digitalWrite(_driveInfo.stepPin, LOW);
+    delayMicroseconds((driveONEWarmingFixedPauseTimeUS));
+    steps_done_2++;
+  };
+    
+  Serial << "Warmin if drive #" << _drive.num << " is done in " << steps_done_1 << " + " << steps_done_2 << " steps" << '\n';
+  return _drive;
 }
 
 void loop() {
@@ -203,6 +257,6 @@ void loop() {
   digitalWrite(LED_BUILTIN, LOW);
   driveOne = ChangeDirection(driveOne);
   long int t2 = millis();
-  Serial.print("Loop took "); Serial.print(float(t2-t1)/1000); Serial<< " sec" << '\n';
+  Serial.print("Loop took "); Serial.print(float(t2-t1)/1000); Serial << " sec" << '\n';
   delay(99999999);
 }
