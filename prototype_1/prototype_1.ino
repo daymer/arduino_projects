@@ -1,9 +1,16 @@
+#define interruptPinLeft 2   //0 left, react on +
+#define interruptPinRight 3  //1 right, react on +
+volatile byte stateInterruptLeft = LOW; // unused
+volatile byte stateInterruptRight = LOW; // unused
 
-#define driveONEDirPin 2 //0
-#define driveONEStepPin 3  //1
+volatile int InterruptLeftHitCount = 0;
+volatile int InterruptRightHitCount = 0;
+volatile unsigned long LastInterruptLeftHitTime = 0;
+volatile unsigned long LastInterruptRightHitTime = 0;
+  
+#define driveONEDirPin 4 //2
+#define driveONEStepPin 5  //3
 unsigned int LoopCounter;
-// left d4 +
-// right d5 +
 
 template <typename T>
 Print& operator<<(Print& printer, T value)
@@ -143,6 +150,18 @@ struct driveInfo ChangeDirection(struct driveInfo _driveInfo) {
   return _driveInfo;
 }
 
+void FixInterruptLeft() {
+  if (millis() - LastInterruptLeftHitTime >= 300) {
+    LastInterruptLeftHitTime = millis();
+    InterruptLeftHitCount++;
+    }
+  }
+
+void FixInterruptRight() {
+  }
+
+void(* resetFunc) (void) = 0; //declare reset function at address 0
+
 void setup() {
   Serial.begin(9600);
   // Setting pins as OUTPUT
@@ -155,9 +174,24 @@ void setup() {
   driveOne = GetDriveInfo(1);
   struct driveInfo driveONEInfo;
   driveOne = SetDirection(driveOne);
+
+  // interruptions
+  pinMode(interruptPinLeft, INPUT_PULLUP);
+  pinMode(interruptPinRight, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(interruptPinLeft), FixInterruptLeft, RISING);
+  attachInterrupt(digitalPinToInterrupt(interruptPinRight), FixInterruptRight, RISING);
+
+  Serial.println("Init is done, warming up");
+  
+
+  
   Serial.println("Setup is done, starting the main programm");
 }
 
+
+void WarmingUp(struct driveInfo _driveInfo) {
+  // Move _driveInfo to the left untill interruptPinLeft will Rise
+}
 
 void loop() {
   LoopCounter++;
