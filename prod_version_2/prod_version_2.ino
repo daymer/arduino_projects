@@ -1,3 +1,5 @@
+//#include "Arduino.h"
+
 template <typename T>
 Print& operator<<(Print& printer, T value)
 {
@@ -10,7 +12,9 @@ Print& operator<<(Print& printer, T value)
 void setup() {
   Serial.begin(9600);
   Serial << "Setup is starting..." << '\n';
+  Serial << "Making actions, drive 1" << '\n';
   make_action_lists(drive_1_actions, drive_1_actions_num);
+  Serial << "Making actions, drive 2" << '\n';
   make_action_lists(drive_2_actions, drive_2_actions_num);
   Serial << "Setup is complited" << '\n';
 }
