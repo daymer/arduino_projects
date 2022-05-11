@@ -5,22 +5,7 @@
 //int NumOfDrivesToUse = 2;
 unsigned char StepLengthMicSec = 64;
 
-unsigned char drive_1_actions_num = 4;
-String drive_1_actions[] = {
-  "d;0;0",
-  "s;0;100;10;", // sec//distance in mm//speed mm/sec
-  "d;10;1",
-  "s;11;100;10;"
-};
 
-
-unsigned char drive_2_actions_num = 4;
-String drive_2_actions[] = {
-  "d;0;0",
-  "s;0;50;2;",
-  "d;5.1;1",
-  "s;10;50;2;"
-};
 
 //int total_actions_num = drive_1_actions_num + drive_2_actions_num;
 
