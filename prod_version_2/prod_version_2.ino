@@ -15,6 +15,10 @@ struct DriveActions {
 
 #include "setup.h"
 
+void init_drive(int drive_num){
+  struct DriveActions d_actions = make_action_lists(drive_1_actions, drive_1_actions_num, 1);
+}
+
 void setup() {
   Serial.begin(9600);
   Serial << "Setup is starting..." << '\n';

@@ -93,8 +93,8 @@ struct N toN(int mm, float spd, char d_num){
     // reality
     _n.t_n =  (long) (_n.sleep_n + 1) * peeks;
     //Serial << "DEBUG: t_n " << _n.t_n << "; t_n_exp: " << t_n_exp << ", _n.sleep_n: " << _n.sleep_n << "\n";
-    Serial << "DEBUG: A DIFF = " << (t_n_exp - _n.t_n) * StepLengthMicSec / 1000  << " millisec!" << "\n";
-    Serial << "DEBUG: A DIFF = " << (t_n_exp - _n.t_n)  << " Ns!" << "\n";
+    //Serial << "DEBUG: A DIFF = " << (t_n_exp - _n.t_n) * StepLengthMicSec / 1000  << " millisec!" << "\n";
+    //Serial << "DEBUG: A DIFF = " << (t_n_exp - _n.t_n)  << " Ns!" << "\n";
     // TODO: this will be a question for speed-up \ slow down 
     return _n;
   }
@@ -114,7 +114,7 @@ struct DriveActions make_action_lists(String drive_actions[], char arraySize, ch
         point = point + t.length();
             _task.d = e.substring(point+1,point+2).toInt(); //// Dir
         _result.a[dirs] = _task;
-        Serial << "Dir task: on " << t << " second (I = " << _task.i <<") switch to " << _task.d << '\n';
+        //Serial << "Dir task: on " << t << " second (I = " << _task.i <<") switch to " << _task.d << '\n';
       }
     else {
         steps = steps++;
@@ -130,8 +130,8 @@ struct DriveActions make_action_lists(String drive_actions[], char arraySize, ch
         _task.n = _n.t_n;
         _task.s = _n.sleep_n;
         _result.b[steps] = _task;
-        Serial << "Step task: starting on " << t << " second (I = " << _task.i <<") do " << n <<  " mm in " <<  spd << " mm/sec" <<'\n';
-        Serial << "           totally: 64 mics * " << _task.n << " steps, each " << "frequency: 1:" << _task.s <<'\n';
+        //Serial << "Step task: starting on " << t << " second (I = " << _task.i <<") do " << n <<  " mm in " <<  spd << " mm/sec" <<'\n';
+        //Serial << "           totally: 64 mics * " << _task.n << " steps, each " << "frequency: 1:" << _task.s <<'\n';
       }
   };
   return _result;
