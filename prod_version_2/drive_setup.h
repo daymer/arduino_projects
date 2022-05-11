@@ -8,10 +8,10 @@ unsigned char StepLengthMicSec = 64;
 
 
 
-String strSubs(String src_str, int point){
+String strSubs(String src_str, int point, String del){
   String t = "";
   String c = src_str.substring(point, point++);
-  while (c != ";"){
+  while (c != del){
       t += c;
       c = src_str.substring(point,point++);
     };

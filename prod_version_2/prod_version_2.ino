@@ -9,41 +9,34 @@ Print& operator<<(Print& printer, T value)
 }
 
 struct DriveActions {
-    List<String> a; //dirs
-    List<String> b; //steps
+    String a; //dirs
+    String b; //steps
 };
 
 #include "setup.h"
 
 void init_drive(int drive_num){
   struct DriveActions d_actions;
-  
-    List<String> drive_1_actions;
-    drive_1_actions.add("d;0;0");
-    drive_1_actions.add("s;0;100;10;");
-    drive_1_actions.add("d;10;1");
-    drive_1_actions.add("s;11;100;10;");
-  
-    List<String> drive_2_actions; 
-    drive_2_actions.add("d;0;0");
-    drive_2_actions.add("s;0;50;2;");
-    drive_2_actions.add("d;5.1;1");
-    drive_2_actions.add("s;25;50;2;");
+  String drive_1_actions = "d;0;0|s;0;100;10;|d;10;1|s;11;100;10;|";
+  String drive_2_actions = "d;0;0|s;0;50;2;|d;5.1;1|s;25;50;2;|";
 
   if (drive_num==1){
-    d_actions = make_action_lists(drive_1_actions, 1);
+    d_actions = make_action_lists(drive_1_actions, drive_num);
   }
   else if (drive_num==2){
-    d_actions = make_action_lists(drive_2_actions, 2);
+    d_actions = make_action_lists(drive_2_actions, drive_num);
   }
-  for (int i = 0; i < d_actions.a.getSize(); i++) 
-    { 
-      Serial << d_actions.a[i]  << '\n';
-  };
-  for (int i = 0; i < d_actions.b.getSize(); i++) 
-    { 
-      Serial << d_actions.b[i]  << '\n';
-  };
+  
+  int step_point = 0;
+  while (step_point < d_actions.a.length())  {
+    String e = strSubs(d_actions.a, step_point, "|");
+    step_point = step_point +  e.length() + 1;
+    Serial << e  << '\n';};
+  step_point = 0;
+  while (step_point < d_actions.b.length())  {
+    String e = strSubs(d_actions.b, step_point, "|");
+    step_point = step_point +  e.length() + 1;
+    Serial << e  << '\n';};
 }
 
 void setup() {
