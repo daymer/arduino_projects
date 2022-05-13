@@ -98,8 +98,15 @@ int pause_mills = 1000;
 void loop() {
   I++;
   // each loop should be exact 64 micro sec
+  BUFA = PORTD;
   currentMillis  = millis();
-  drive_app_step(4, 154278, 26);
+  bitWrite(BUFA, 4, 1);
   PORTD = BUFA;
+  delay(1000);
+  bitWrite(BUFA, 4, 0);
+  PORTD = BUFA;
+  
+  //drive_app_step(4, 154278, 26);
+  //PORTD = BUFA;
     
   }
