@@ -1,7 +1,7 @@
 #include "List.hpp"
 #include "script_tasks.h"
 
-bool gDEBUG = false;
+bool gDEBUG = true;
 
 template <typename T>
 Print& operator<<(Print& printer, T value)
@@ -19,7 +19,7 @@ struct DriveActions d_actions_1;
 struct DriveActions d_actions_2;
 
 uint8_t BUFA; // stage on odd
-uint8_t BUFB;
+//uint8_t BUFB;
 
 unsigned long TotalI;
 unsigned long I=0;
@@ -80,7 +80,7 @@ void setup() {
   DDRD |= bit(DDD5);                        // set digital pin 5 as OUTPUT
 
   BUFA = B00000000;
-  BUFB = B11111100; 
+  //BUFB = B11111100; 
 
   
   
@@ -91,9 +91,7 @@ void setup() {
   Tsec_start = millis();
 }
 
-unsigned long
-  currentMillis,
-  previousMillis;
+
 
 int pause_mills = 1000;
 
@@ -101,7 +99,7 @@ void loop() {
   I++;
   // each loop should be exact 64 micro sec
   currentMillis  = millis();
-
-
-    }
+  drive_app_step(4, 154278, 26);
+  PORTD = BUFA;
+    
   }

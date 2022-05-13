@@ -1,5 +1,5 @@
 #include "drive_setup.h"
-bool DEBUG = false;
+bool DEBUG = true;
 
 struct DriveActions make_action_lists(String drive_actions, char drive_num){
   struct DriveActions _result;
