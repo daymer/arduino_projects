@@ -6,8 +6,6 @@ float drive_2_mmPr = 3.5; // REQ CAL
 
 unsigned char StepLengthMicSec = 64;
 
-
-
 String strSubs(String src_str, int point, String del){
   String t = "";
   String c = src_str.substring(point, point++);
