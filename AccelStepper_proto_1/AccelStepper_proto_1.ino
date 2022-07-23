@@ -6,11 +6,12 @@
 #include <AccelStepper.h>
 #include <MultiStepper.h>
 
-// EG X-Y position bed driven by 2 steppers
-// Alas its not possible to build an array of these with different pins for each :-(
-AccelStepper stepper1(AccelStepper::FULL2WIRE, 4, 5);
-AccelStepper stepper2(AccelStepper::FULL2WIRE, 6, 7);
-//AccelStepper stepper3(AccelStepper::FULL2WIRE, 8, 9);
+AccelStepper stepper1(AccelStepper::FULL2WIRE, 4, 5); // body rotation
+AccelStepper stepper2(AccelStepper::FULL2WIRE, 6, 7); // head rotation
+AccelStepper stepper3(AccelStepper::FULL2WIRE, 8, 9); // R hand up-down
+//AccelStepper stepper4(AccelStepper::FULL2WIRE, 10, 11); // R hand in-out (REQS CALIBRATION!)
+AccelStepper stepper5(AccelStepper::FULL2WIRE, A0, A1); // L hand up-down
+//AccelStepper stepper6(AccelStepper::FULL2WIRE, A2, A3); // L hand in-out (REQS CALIBRATION!)
 
 // Up to 10 steppers can be handled as a group by MultiStepper
 MultiStepper steppers;
@@ -30,16 +31,20 @@ void setup() {
   //stepper2.moveTo(1000000);
 
  
-  //stepper3.setMaxSpeed(600.0);
-  //stepper3.setAcceleration(200.0);
+  stepper3.setMaxSpeed(600.0);
+  stepper3.setAcceleration(200.0);
   //stepper3.moveTo(1000000); 
 
+  stepper5.setMaxSpeed(600.0);
+  stepper5.setAcceleration(200.0);
+  
 
 
   // Then give them to MultiStepper to manage
   steppers.addStepper(stepper1);
   steppers.addStepper(stepper2);
-  //steppers.addStepper(stepper3);
+  steppers.addStepper(stepper3);
+  steppers.addStepper(stepper5);
 }
 
 void loop() {
